@@ -14,7 +14,7 @@ public class App {
 
 	public static void main(String args[]) {
 
-		Dictionary<String, Integer> dict = new ChainingHashTable<>();
+		Dictionary<String, Integer> dict = new OpenAdressingHashTable();
                 Dictionary<String, Integer> dictt=new OpenAdressingHashTable<>();
 		
 		try (Scanner scanner = new Scanner(System.in)) {

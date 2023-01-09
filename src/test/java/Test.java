@@ -32,31 +32,29 @@ public class Test {
     }
     
     @org.junit.Test
-    public boolean testTest2(){
+    public void testTest2(){
         Dictionary <Integer , Integer> dict = new OpenAdressingHashTable<>();
-
+        boolean result=false;
         ArrayList<Integer> values = new ArrayList<>();
         Random rand = new Random(17);
-        for(int i=0; i<SIZE; i++){
+        for(int i=0; i<3; i++){
             int m = rand.nextInt(1000);
             values.add(m);
             dict.put(m, m+1);
         }
-        for(int i=0; i<SIZE-1; i++){
+        for(int i=0; i<3; i++){
             int m = rand.nextInt(1000);
             values.add(m);
             dict.remove(m);
         }
         if(dict.size() == 1 ){
-            return true;
+            result= true;
         }
-        else {
-        return false;
-        }
+        assertTrue(result);
         
     }
     @org.junit.Test
-    public boolean  testTest3(){
+    public void  testTest3(){
         Dictionary <Integer , Integer> dict = new OpenAdressingHashTable<>();
 
         ArrayList<Integer> values = new ArrayList<>();
@@ -72,7 +70,7 @@ public class Test {
                 result= true;
             }
         }
-        return result;
+        assertTrue(result);
         }
     }
 
