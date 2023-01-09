@@ -58,9 +58,7 @@ public interface Dictionary<K, V> extends Iterable<Dictionary.Entry<K, V>> {
 	 * 
 	 * @return true if empty, false otherwise
 	 */
-        default boolean isEmpty(){
-            return size()==0;
-        }
+         boolean isEmpty();
 
 	/**
 	 * Get the number of elements

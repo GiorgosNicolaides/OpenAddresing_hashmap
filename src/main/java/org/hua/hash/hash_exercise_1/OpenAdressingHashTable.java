@@ -11,27 +11,24 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
-
-public class OpenAdressingHashTable<K, V> implements Dictionary<K, V> {
-    public static final int DEFAULT_INITIAL_SIZE = 17;
-    public static final int  MULTIPLIER = 2;
+public class OpenAdressingHashTable<K,V> implements Dictionary<K, V> {
+      public static final int DEFAULT_INITIAL_SIZE = 17;
     private Entry[] array;
     private int size;
-    private int k = 1; // k will be the value changing to the number of times rehashing was needed, it
-                       // will be used in order for h(x) to be different after each time rehashing was
-                       // done
-    private ArrayList<Integer> h = new ArrayList<Integer>();
+    private int k=1; //k will be the value changing to the number of times rehashing was needed, it will be used in order for h(x) to be different after each time rehashing was done
+    private ArrayList<Integer> h= new ArrayList<Integer>();
 
     public OpenAdressingHashTable(int m) {
         if (m <= 0) {
             throw new IllegalArgumentException("Array size must be positive");
         }
         this.size = 0;
-        array = new Entry[m];
+         array =new Entry[m];
         for (int i = 0; i < m; i++) {
             this.array[i] = null;
         }
     }
+
 
     public OpenAdressingHashTable() {
         this(DEFAULT_INITIAL_SIZE);
@@ -43,24 +40,41 @@ public class OpenAdressingHashTable<K, V> implements Dictionary<K, V> {
         insert(key, value);
 
     }
-
-    public int hashFuction(Object object) {
-        return (k * 5 * object.hashCode()) % array.length;
+    public int hashFuction(K key){
+        return (k*5*Math.abs(key.hashCode()) )% array.length;
     }
 
     @Override
     public V remove(K key) {
-
+      
         // Apply hash function
         // to find index for given key
         int hashIndex = hashFuction(key);
-
+ 
         // finding the node with given key
-        while (array[hashIndex] != null) {
+        while (array[hashIndex] !=null) {
             // if node found
             if (key.equals(array[hashIndex].getKey())) {
                 Entry<K, V> temp = array[hashIndex];
-                array[hashIndex] = null;
+                array[hashIndex]=null;
+                int i;
+                for (i=1;i<=array.length; i++){
+                    int next=hashFuction((K) array[hashIndex+i].getKey());
+                if(array[(hashIndex+i)%array.length]==null){
+                    return temp.getValue();
+                }else if(array[(hashIndex+i)%array.length]==null){
+                    if(next<=hashIndex){
+                        array[hashIndex]=array[hashIndex+i];
+                        array[hashIndex+i]=null;
+                    }   
+                    }
+       
+                }
+                
+ 
+                // Insert dummy node here for further use
+               // arr[hashIndex] = dummy;
+ 
                 // Reduce size
                 size--;
                 return temp.getValue();
@@ -68,53 +82,53 @@ public class OpenAdressingHashTable<K, V> implements Dictionary<K, V> {
             hashIndex++;
             hashIndex %= array.length;
         }
-
+ 
         // If not found return null
         return null;
     }
-
+   
     @Override
     public V get(K key) {
-        // Apply hash function to find index for given key
+          // Apply hash function to find index for given key
         int hashIndex = hashFuction(key);
         int counter = 0;
-
+ 
         // finding the node with given key
         while (array[hashIndex] != null) { // int counter =0; // BUG!
-            counter++;
-            if (counter >= array.length) // to avoid infinite loop
+                   counter++;
+            if (counter > array.length) // to avoid infinite loop
                 return null;
-
+ 
             // if node found return its value
             if (key.equals(array[hashIndex].getKey()))
                 return (V) array[hashIndex].getValue();
             hashIndex++;
             hashIndex %= array.length;
         }
-
+ 
         // If not found return null
         return null;
     }
 
     @Override
     public boolean contains(K key) {
-        // Apply hash function to find index for given key
+         // Apply hash function to find index for given key
         int hashIndex = hashFuction(key);
         int counter = 0;
-
+ 
         // finding the node with given key
         while (array[hashIndex] != null) { // int counter =0; // BUG!
-
+ 
             if (counter++ > array.length) // to avoid infinite loop
                 return false;
-
+ 
             // if node found return true
             if (key.equals(array[hashIndex].getKey()))
                 return true;
             hashIndex++;
             hashIndex %= array.length;
         }
-
+ 
         // If not found return null
         return false;
     }
@@ -128,7 +142,7 @@ public class OpenAdressingHashTable<K, V> implements Dictionary<K, V> {
     public void clear() {
         this.size = 0;
         for (int i = 0; i < array.length; i++) {
-            array[i] = null;
+            array[i]=null;
         }
 
     }
@@ -138,40 +152,41 @@ public class OpenAdressingHashTable<K, V> implements Dictionary<K, V> {
         return new HashIterator();
     }
 
-    private void insert(K key, V value) {
-        EntryImpl<K, V> temp = new EntryImpl<K, V>(key, value);
+    
 
+    private void insert(K key, V value) {
+        EntryImpl<K, V> temp =new EntryImpl<K,V>(key,value);             
         // Apply hash function to find index for given key
         int hashIndex = hashFuction(key);
-        // find next free space
-        while (array[hashIndex] != null
-                && key.equals(array[hashIndex].getKey())
-                && array[hashIndex].getKey().equals(-1)) {
+       // find next free space
+        while (array[hashIndex] !=null) {
+                  //  if(key.equals(array[hashIndex].getKey())){
             hashIndex++;
             hashIndex %= array.length;
-        }
-
+     //   }
+                }
+ 
         // if new node to be inserted
         // increase the current size
-        if (array[hashIndex] == null
-                || array[hashIndex].getKey().equals(-1))
+        if (array[hashIndex] == null)          
             size++;
         array[hashIndex] = temp;
     }
+ 
+    
 
     private void ReHashIfNeeded() {
         double avg = (double) size / array.length;
         int newLength;
         if (avg > 4) {
-            newLength = array.length * MULTIPLIER;
-            k = k + 1;
+            newLength = array.length * 2;
+            k=k+1;
         } else if (avg < (1 / 4) && array.length > 2 * DEFAULT_INITIAL_SIZE) {
-            newLength = array.length / MULTIPLIER;
-            k = k + 1;
+            newLength = array.length / 2;
+            k=k+1;
         } else {
             return;
         }
-        
         OpenAdressingHashTable<K, V> newHashTable = new OpenAdressingHashTable<K, V>(newLength);
         for (Entry<K, V> e : this) {
             newHashTable.insert(e.getKey(), e.getValue());
@@ -201,20 +216,19 @@ public class OpenAdressingHashTable<K, V> implements Dictionary<K, V> {
         }
 
     }
-
-    // i m not going to use this implementation at all
+ //i m not going to use this implementation at all
     private class HashIterator implements Iterator<Entry<K, V>> {
 
         private int i;
         private Iterator<Entry<K, V>> it;
 
         public HashIterator() {
-
+            
         }
 
         @Override
         public boolean hasNext() {
-            return false;
+          return false;
         }
 
         @Override
@@ -226,5 +240,11 @@ public class OpenAdressingHashTable<K, V> implements Dictionary<K, V> {
         }
 
     }
+    @Override
+    public boolean isEmpty() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }
+    

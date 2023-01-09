@@ -1,9 +1,10 @@
+package org.hua.hash.hash_exercise_1;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.hua.hash.hash_exercise_1;
+
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -43,7 +44,6 @@ public class ChainingHashTable<K, V> implements Dictionary<K, V> {
 
     @Override
     public V remove(K key) {
-        
         LinkedList<Entry<K, V>> List = getList(key);
         ListIterator<Entry<K, V>> it = List.listIterator();
         while (it.hasNext()) {
@@ -195,6 +195,12 @@ public class ChainingHashTable<K, V> implements Dictionary<K, V> {
             return it.next();
         }
 
+    }
+
+    @Override
+    public boolean isEmpty() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

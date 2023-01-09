@@ -14,7 +14,8 @@ public class App {
 
 	public static void main(String args[]) {
 
-		Dictionary<String, Integer> dict = new OpenAdressingHashTable();
+		Dictionary<String, Integer> dict = new ChainingHashTable<>();
+                Dictionary<String, Integer> dictt=new OpenAdressingHashTable<>();
 		
 		try (Scanner scanner = new Scanner(System.in)) {
 			while(scanner.hasNext()) {
@@ -25,14 +26,14 @@ public class App {
 				StringTokenizer st = new StringTokenizer(line);
 				while(st.hasMoreTokens()) { 
 					String word  = st.nextToken();
-					Integer curFreq = dict.get(word);
+					Integer curFreq = dictt.get(word);
 					if (curFreq == null) { 
 						curFreq = 1;
 					} else { 
 						curFreq++;
 					}
-					dict.put(word, curFreq);
-                                        System.out.println(dict.size());
+					dictt.put(word, curFreq);
+                                        System.out.println(dictt.size());
 				}
 			}
                         
@@ -40,11 +41,8 @@ public class App {
 
 		}
 		System.out.println("wtf");
-		for(Entry<String, Integer> e: dict) { 
+		for(Entry<String, Integer> e: dictt) { 
 			System.out.println("Word " + e.getKey() + " appeared " + e.getValue() + " times");
-		}
-		for(Entry<String, Integer> e: dict){
-			System.out.println(e.getKey() + "\t" +e.getValue());
 		}
 
 	}
