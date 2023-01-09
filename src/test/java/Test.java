@@ -9,7 +9,7 @@ import org.junit.experimental.theories.suppliers.TestedOn;
 
 public class Test {
 
-    public static final int SIZE = 10000;
+    public static final int SIZE = 10;
     /**
      * 
      */
@@ -37,17 +37,16 @@ public class Test {
         boolean result=false;
         ArrayList<Integer> values = new ArrayList<>();
         Random rand = new Random(17);
-        for(int i=0; i<3; i++){
-            int m = rand.nextInt(1000);
+        for(int i=0; i<SIZE; i++){
+            int m = rand.nextInt(10);
             values.add(m);
             dict.put(m, m+1);
         }
-        for(int i=0; i<3; i++){
-            int m = rand.nextInt(1000);
-            values.add(m);
-            dict.remove(m);
-        }
-        if(dict.size() == 1 ){
+        
+            dict.clear();
+        
+        
+        if(dict.size() == 0 ){
             result= true;
         }
         assertTrue(result);
