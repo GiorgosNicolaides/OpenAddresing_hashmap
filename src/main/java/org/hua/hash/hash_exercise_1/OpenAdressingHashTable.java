@@ -5,11 +5,8 @@
  */
 package org.hua.hash.hash_exercise_1;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.NoSuchElementException;
 public class OpenAdressingHashTable<K,V> implements Dictionary<K, V> {
       public static final int DEFAULT_INITIAL_SIZE = 17;
@@ -46,43 +43,25 @@ public class OpenAdressingHashTable<K,V> implements Dictionary<K, V> {
 
     @Override
     public V remove(K key) {
-      
-        // Apply hash function
-        // to find index for given key
+        // Apply hash function to find index for given key
         int hashIndex = hashFuction(key);
- 
-        // finding the node with given key
+       // find next free space
         while (array[hashIndex] !=null) {
-            // if node found
-            if (key.equals(array[hashIndex].getKey())) {
-                Entry<K, V> temp = array[hashIndex];
-                array[hashIndex]=null;
-                int i;
-                for (i=1;i<=array.length; i++){
-                    int next=hashFuction((K) array[hashIndex+i].getKey());
-                if(array[(hashIndex+i)%array.length]==null){
-                    return temp.getValue();
-                }else if(array[(hashIndex+i)%array.length]==null){
-                    if(next<=hashIndex){
-                        array[hashIndex]=array[hashIndex+i];
-                        array[hashIndex+i]=null;
-                    }   
-                    }
-       
-                }
-                
- 
-                // Insert dummy node here for further use
-               // arr[hashIndex] = dummy;
- 
-                // Reduce size
-                size--;
-                return temp.getValue();
-            }
+                  //  if(key.equals(array[hashIndex].getKey())){
+                    array[hashIndex] = array[hashIndex+1];
             hashIndex++;
             hashIndex %= array.length;
-        }
- 
+     //   }
+        // Apply hash function
+        // to find index for given key
+        
+        
+        
+                  
+            }
+            size--;
+        
+        
         // If not found return null
         return null;
     }
