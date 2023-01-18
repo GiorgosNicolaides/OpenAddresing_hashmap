@@ -71,6 +71,8 @@ public interface Dictionary<K, V> extends Iterable<Dictionary.Entry<K, V>> {
 	 * Clear
 	 */
 	void clear();
+        
+        void display();
 
 	/**
 	 * Get an iterator.

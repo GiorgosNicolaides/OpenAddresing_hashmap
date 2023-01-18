@@ -38,32 +38,57 @@ public class OpenAdressingHashTable<K,V> implements Dictionary<K, V> {
 
     }
     public int hashFuction(K key){
-        return (k*5*Math.abs(key.hashCode()) )% array.length;
+        return (Math.abs(k*5*Math.abs(key.hashCode()) )% array.length);
     }
 
     @Override
     public V remove(K key) {
         // Apply hash function to find index for given key
         int hashIndex = hashFuction(key);
-       // find next free space
-        while (array[hashIndex] !=null) {
-                  //  if(key.equals(array[hashIndex].getKey())){
-                    array[hashIndex] = array[hashIndex+1];
-            hashIndex++;
-            hashIndex %= array.length;
-     //   }
-        // Apply hash function
-        // to find index for given key
-        
-        
-        
-                  
+        boolean found=false;
+        int counter=0;
+        V temp;
+        while (counter<array.length){
+            if (array[hashIndex] !=null){
+                    if(key.equals(array[hashIndex].getKey())){ 
+            //we found the element
+                        found=true;
+                        break;
+                                }
+             hashIndex++;
+            hashIndex %= array.length;   
+            counter++;
+        }                         
+        }
+        if(!found){
+            return null;  //value was not found, return null
+        }else{
+            temp= (V) array[hashIndex].getValue();
+            array[hashIndex]=null;
+        }
+        while(array[(hashIndex+1)%array.length]!=null){
+            K nextkey=(K) array[(hashIndex+1)%array.length].getKey();
+            if(hashFuction(nextkey)<=hashIndex){
+          array[hashIndex] = array[(hashIndex+1)%array.length];
+            array[(hashIndex+1)%array.length]=null;           
             }
+         hashIndex++;
+            hashIndex %= array.length; 
+        }
+            //value was found, we deleted it and now we return it                 
             size--;
-        
-        
-        // If not found return null
-        return null;
+       ReHashIfNeeded();
+        return temp;
+    }
+      @Override
+     public void display(){
+    
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != null ){
+                System.out.println("Word " + array[i].getKey() +" appeared " + array[i].getValue()+ " times"); 
+                 
+             }
+       }
     }
    
     @Override
@@ -73,18 +98,18 @@ public class OpenAdressingHashTable<K,V> implements Dictionary<K, V> {
         int counter = 0;
  
         // finding the node with given key
-        while (array[hashIndex] != null) { // int counter =0; // BUG!
-                   counter++;
-            if (counter > array.length) // to avoid infinite loop
-                return null;
- 
+        while(counter<array.length){
             // if node found return its value
-            if (key.equals(array[hashIndex].getKey()))
+            if  (array[hashIndex]!=null){
+                if(key.equals(array[hashIndex].getKey())){
                 return (V) array[hashIndex].getValue();
+                }
+                }
             hashIndex++;
             hashIndex %= array.length;
+            counter++;
         }
- 
+        
         // If not found return null
         return null;
     }
@@ -96,18 +121,17 @@ public class OpenAdressingHashTable<K,V> implements Dictionary<K, V> {
         int counter = 0;
  
         // finding the node with given key
-        while (array[hashIndex] != null) { // int counter =0; // BUG!
- 
-            if (counter++ > array.length) // to avoid infinite loop
-                return false;
+        while (counter<array.length) { 
  
             // if node found return true
+            if (array[hashIndex]!=null){
             if (key.equals(array[hashIndex].getKey()))
                 return true;
+            }
             hashIndex++;
             hashIndex %= array.length;
+        counter++;
         }
- 
         // If not found return null
         return false;
     }
@@ -152,26 +176,49 @@ public class OpenAdressingHashTable<K,V> implements Dictionary<K, V> {
         array[hashIndex] = temp;
     }
  
-    
+     @Override
+    public boolean isEmpty() {
+        int counter = 0;
+       int hashIndex=0;
+        // finding the node with given key
+        while (counter<array.length) { 
+ 
+            // if node found return false
+            if (array[hashIndex]!=null){
+            
+                return false;
+            }
+            hashIndex++;
+            hashIndex %= array.length;
+        counter++;
+        }
+        // array is empty
+        return true;
+    }
 
     private void ReHashIfNeeded() {
         double avg = (double) size / array.length;
         int newLength;
-        if (avg > 4) {
+        if (avg > 0.9) {
             newLength = array.length * 2;
-            k=k+1;
-        } else if (avg < (1 / 4) && array.length > 2 * DEFAULT_INITIAL_SIZE) {
+            
+            k=k+1; //hash fuction changes
+        } else if (avg < 0.25 && array.length > 2 * DEFAULT_INITIAL_SIZE) {
             newLength = array.length / 2;
-            k=k+1;
+            k=k+1; //hash fuction changes
         } else {
             return;
         }
         OpenAdressingHashTable<K, V> newHashTable = new OpenAdressingHashTable<K, V>(newLength);
-        for (Entry<K, V> e : this) {
-            newHashTable.insert(e.getKey(), e.getValue());
-        }
+          for (int i = 0; i < array.length; i++) {
+            if (array[i] != null ){
+               EntryImpl<K, V> temp =new EntryImpl<K,V>( (K) array[i].getKey(),(V) array[i].getValue()); 
+                 newHashTable.insert(temp.getKey(), temp.getValue());
+             }
+       }
         this.array = newHashTable.array;
         this.size = newHashTable.size;
+       // System.out.println("array size "+array.length);
     }
 
     private static class EntryImpl<K, V> implements Entry<K, V> {
@@ -219,11 +266,7 @@ public class OpenAdressingHashTable<K,V> implements Dictionary<K, V> {
         }
 
     }
-    @Override
-    public boolean isEmpty() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+   
 
 }
     

@@ -14,12 +14,12 @@ public class App {
 
 	public static void main(String args[]) {
 
-		Dictionary<String, Integer> dict = new OpenAdressingHashTable();
+		//Dictionary<String, Integer> dict = new ChainingHashTable<>();
                 Dictionary<String, Integer> dictt=new OpenAdressingHashTable<>();
-		
-		try (Scanner scanner = new Scanner(System.in)) {
-			while(scanner.hasNext()) {
-                            if (scanner.next().equals("s")){
+		 System.out.println("in order to terminate the input proccess you can give: \"sws\" ");
+		try (Scanner scanner = new Scanner(System.in)) {                   
+			while(scanner.hasNext()) {                   
+                            if (scanner.next().equals("sws")){
                                 break;
                             }
 				String line = scanner.nextLine();
@@ -29,22 +29,19 @@ public class App {
 					Integer curFreq = dictt.get(word);
 					if (curFreq == null) { 
 						curFreq = 1;
+                                                dictt.put(word, curFreq);
 					} else { 
 						curFreq++;
+                                                dictt.remove(word);
+                                                        dictt.put(word, curFreq);
 					}
-					dictt.put(word, curFreq);
-                                        System.out.println(dictt.size());
+					
+                                       // System.out.println(dictt.size());
 				}
 			}
                         
                         
 
 		}
-		System.out.println("wtf");
-		for(Entry<String, Integer> e: dictt) { 
-			System.out.println("Word " + e.getKey() + " appeared " + e.getValue() + " times");
-		}
-
-	}
-
-}
+                dictt.display();
+        }}
